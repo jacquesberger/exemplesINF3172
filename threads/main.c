@@ -23,17 +23,18 @@ const int THREAD_COUNT = 8;
 int factorielle(int);
 void start(void*);
 void initialiserParams(int params[THREAD_COUNT]);
-void lancerThreads(pthread_t threads[THREAD_COUNT], int params[THREAD_COUNT]);
-void attendreThreads(pthread_t threads[THREAD_COUNT]);
+void lancerThreads(pthread_t threads[THREAD_COUNT], int params[THREAD_COUNT], int resultats[THREAD_COUNT]);
+void attendreThreads(pthread_t threads[THREAD_COUNT], int resultats[THREAD_COUNT]);
 
 int main(int argc, char** argv)
 {
   pthread_t threads[THREAD_COUNT];
   int params[THREAD_COUNT];
+  int resultats[THREAD_COUNT];
 
   initialiserParams(params);
-  lancerThreads(threads, params);
-  attendreThreads(threads);
+  lancerThreads(threads, params, resultats);
+  attendreThreads(threads, resultats);
 
   return 0;
 }
@@ -65,34 +66,35 @@ void initialiserParams(int params[THREAD_COUNT])
   }
 }
 
-void lancerThreads(pthread_t threads[THREAD_COUNT], int params[THREAD_COUNT])
+void lancerThreads(pthread_t threads[THREAD_COUNT], int params[THREAD_COUNT], int resultats[THREAD_COUNT])
 {
   int i;
-  int resultat;
 
   for (i = 0; i < THREAD_COUNT; i++)
   {
-    resultat = pthread_create(&(threads[i]), NULL, (void*) &start, (void*) &(params[i]));
-    if (resultat != 0) {
+    resultats[i] = pthread_create(&(threads[i]), NULL, (void*) &start, (void*) &(params[i]));
+    if (resultats[i] != 0) {
       fprintf(stderr, "Erreur de création de thread, annulation de l'exécution du programme.\n");
-      exit(1);
     }
   }
 }
 
-void attendreThreads(pthread_t threads[THREAD_COUNT])
+void attendreThreads(pthread_t threads[THREAD_COUNT], int resultats[THREAD_COUNT])
 {
   int i;
   int resultat;
 
   for (i = 0; i < THREAD_COUNT; i++)
   {
-    resultat = pthread_join(threads[i], NULL);
-    if (resultat != 0)
+    if (resultats[i] == 0)
     {
-      fprintf(stderr, "Erreur avec l'exécution d'un thread.\n");
-      // Comme le programme se termine immédiatement après cette fonction,
-      // inutile de tuer le thread.
+      resultat = pthread_join(threads[i], NULL);
+      if (resultat != 0)
+      {
+        fprintf(stderr, "Erreur avec l'exécution d'un thread.\n");
+        // Comme le programme se termine immédiatement après cette fonction,
+        // inutile de tuer le thread.
+      }
     }
   }
 }
