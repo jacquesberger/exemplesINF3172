@@ -83,17 +83,22 @@ void attendreThreads(pthread_t threads[THREAD_COUNT], int resultats[THREAD_COUNT
 {
   int i;
   int resultat;
+  void* retourThread;
 
   for (i = 0; i < THREAD_COUNT; i++)
   {
     if (resultats[i] == 0)
     {
-      resultat = pthread_join(threads[i], NULL);
+      resultat = pthread_join(threads[i], &retourThread);
       if (resultat != 0)
       {
         fprintf(stderr, "Erreur avec l'exécution d'un thread.\n");
         // Comme le programme se termine immédiatement après cette fonction,
         // inutile de tuer le thread.
+      }
+      else if (*((int*) retourThread) != EXIT_CODE)
+      {
+        fprintf(stderr, "Valeur de retour non attendue.\n");
       }
     }
   }
