@@ -6,7 +6,8 @@ logiciels. Cette matière ne sera pas couverte en classe, le moniteur va donc
 vous expliquer les concepts relatifs à la création de makefiles :
 * le programme make;
 * les cibles;
-* les dépendances (envers les autres cibles ou envers les fichiers).
+* les dépendances (envers les autres cibles ou envers les fichiers);
+* les options de compilation de gcc pour compiler en 2 étapes.
 
 Objectifs
 ---------
